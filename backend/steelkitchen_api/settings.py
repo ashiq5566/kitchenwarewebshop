@@ -12,8 +12,11 @@ CSRF_TRUSTED_ORIGINS = config(
 # ─── Security ────────────────────────────────────────────────────────────────
 SECRET_KEY = config('DJANGO_SECRET_KEY', default='change-me-in-production-use-a-long-random-string')
 DEBUG = config('DEBUG', default=False, cast=bool)
-ALLOWED_HOSTS = config('DJANGO_ALLOWED_HOSTS', default='localhost,127.0.0.1', cast=Csv())
-
+ALLOWED_HOSTS = config(
+    'DJANGO_ALLOWED_HOSTS',
+    default='localhost,127.0.0.1',
+    cast=Csv()
+) + ['.vercel.app'] # Allow all Vercel subdomains for preview deployments
 # ─── Apps ─────────────────────────────────────────────────────────────────────
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -103,8 +106,8 @@ USE_TZ = True
 
 # ─── Static files ─────────────────────────────────────────────────────────────
 STATIC_URL = '/static/'
-STATIC_ROOT = BASE_DIR / 'staticfiles'
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+STATIC_ROOT = '/tmp/staticfiles'          # ← writable on Vercel
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedStaticFilesStorage'
 
 # ─── Media / Cloudinary ───────────────────────────────────────────────────────
 CLOUDINARY_STORAGE = {

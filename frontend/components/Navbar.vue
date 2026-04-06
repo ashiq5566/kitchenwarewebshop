@@ -3,7 +3,7 @@
     <div class="nav-inner">
       <a href="#" class="brand">
         <span class="brand-icon">⬡</span>
-        <span class="brand-name">SteelNest</span>
+        <span class="brand-name">KC Home Bazar</span>
       </a>
       <ul class="nav-links">
         <li><a href="#products" @click.prevent="scrollTo('#products')">Products</a></li>

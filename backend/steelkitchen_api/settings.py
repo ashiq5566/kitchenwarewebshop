@@ -3,6 +3,12 @@ from decouple import config, Csv
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+CSRF_TRUSTED_ORIGINS = config(
+    'CSRF_TRUSTED_ORIGINS',
+    default='https://kitchenwarewebshop.vercel.app',
+    cast=Csv()
+)
+
 # ─── Security ────────────────────────────────────────────────────────────────
 SECRET_KEY = config('DJANGO_SECRET_KEY', default='change-me-in-production-use-a-long-random-string')
 DEBUG = config('DEBUG', default=False, cast=bool)

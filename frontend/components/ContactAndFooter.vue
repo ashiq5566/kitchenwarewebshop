@@ -31,7 +31,7 @@
               </div>
               <div class="wa-messages">
                 <div class="wa-msg received">
-                  <p>👋 Hi! Welcome to SteelNest.</p>
+                  <p>👋 Hi! Welcome to KC Home Bazar.</p>
                   <span class="msg-time">09:00</span>
                 </div>
                 <div class="wa-msg received">
@@ -64,7 +64,7 @@
           <div class="footer-brand">
             <div class="brand-row">
               <span class="brand-hex">⬡</span>
-              <span class="brand-txt">SteelNest</span>
+              <span class="brand-txt">KC Home Bazar</span>
             </div>
             <p>Premium steel kitchenware for<br />the modern Indian kitchen.</p>
             <div class="social-links">

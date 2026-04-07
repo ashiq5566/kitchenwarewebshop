@@ -1,5 +1,7 @@
 from pathlib import Path
 from decouple import config, Csv
+import os
+import dj_database_url
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -68,20 +70,14 @@ WSGI_APPLICATION = 'steelkitchen_api.wsgi.application'
 
 # ─── Database ─────────────────────────────────────────────────────────────────
 # Uses Neon PostgreSQL in production, SQLite locally for development
-if config('DB_HOST', default=''):
+if config('DATABASE_URL', default='', cast=str):
     DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.postgresql',
-            'NAME': config('DB_NAME'),
-            'USER': config('DB_USER'),
-            'PASSWORD': config('DB_PASSWORD'),
-            'HOST': config('DB_HOST'),
-            'PORT': config('DB_PORT', default='5432'),
-            'OPTIONS': {
-                'sslmode': 'require',   # Neon requires SSL
-            },
-        }
-    }
+    "default": dj_database_url.parse(
+        config("DATABASE_URL", cast=str),
+        conn_max_age=600,
+        ssl_require=True
+    )
+}
 else:
     DATABASES = {
         'default': {

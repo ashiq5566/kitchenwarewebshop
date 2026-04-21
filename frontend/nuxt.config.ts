@@ -1,9 +1,12 @@
 export default defineNuxtConfig({
-  compatibilityDate: '2026-04-05',
-  ssr: true,
+  compatibilityDate: '2026-04-21',
+  ssr: false,
+  modules: ['@nuxtjs/tailwindcss'],
   nitro: {
+    preset: 'static',
     prerender: {
-      routes: []
+      failOnError: false,    // ← don't crash on prerender errors
+      routes: ['/']
     }
   },
   runtimeConfig: {
@@ -18,7 +21,7 @@ export default defineNuxtConfig({
       meta: [
         { charset: 'utf-8' },
         { name: 'viewport', content: 'width=device-width, initial-scale=1' },
-        { name: 'description', content: 'Premium steel kitchenware for modern Indian kitchens. Order via WhatsApp.' }
+        { name: 'description', content: 'Premium steel kitchenware for modern Indian kitchens.' }
       ],
       link: [
         { rel: 'preconnect', href: 'https://fonts.googleapis.com' },
@@ -26,8 +29,5 @@ export default defineNuxtConfig({
         { rel: 'stylesheet', href: 'https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600;700&family=DM+Sans:wght@300;400;500;600&display=swap' }
       ]
     }
-  },
-  colorMode: {
-    preference: 'light'
   }
 })

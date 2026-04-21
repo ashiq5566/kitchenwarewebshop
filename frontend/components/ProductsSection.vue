@@ -8,17 +8,19 @@ const products = ref([])
 const categories = ref([{ name: 'All', slug: 'all' }])
 const loading = ref(true)
 
+// useRuntimeConfig is safe at setup level in Nuxt 3 — the real issue
+// is $fetch during SSR hitting a cold API. Disable SSR fetch entirely.
 const config = useRuntimeConfig()
-const apiBase = config.public.apiBase
-const waNumber = config.public.waNumber || '919999999999'
+const apiBase = computed(() => config.public.apiBase || 'http://localhost:8000/api')
+const waNumber = computed(() => config.public.waNumber || '919999999999')
 
 const selectCategory = async (slug) => {
   activeSlug.value = slug
   loading.value = true
   try {
     const url = slug === 'all'
-      ? `${apiBase}/products/`
-      : `${apiBase}/products/?category=${slug}`
+      ? `${apiBase.value}/products/`
+      : `${apiBase.value}/products/?category=${slug}`
     const data = await $fetch(url)
     products.value = Array.isArray(data) ? data : (data.results || [])
   } catch (e) {
@@ -30,7 +32,7 @@ const selectCategory = async (slug) => {
 
 const getWaLink = (product) => {
   const msg = `Hi, I want to order *${product.name}* (₹${Number(product.price).toLocaleString('en-IN')}). Please confirm availability.`
-  return `https://wa.me/${waNumber}?text=${encodeURIComponent(msg)}`
+  return `https://wa.me/${waNumber.value}?text=${encodeURIComponent(msg)}`
 }
 
 onMounted(async () => {
@@ -41,8 +43,8 @@ onMounted(async () => {
 
   try {
     const [prodsData, catsData] = await Promise.all([
-      $fetch(`${apiBase}/products/`),
-      $fetch(`${apiBase}/categories/`)
+      $fetch(`${apiBase.value}/products/`),
+      $fetch(`${apiBase.value}/categories/`)
     ])
     products.value = Array.isArray(prodsData) ? prodsData : (prodsData.results || [])
     const cats = Array.isArray(catsData) ? catsData : (catsData.results || [])

@@ -1,3 +1,59 @@
+
+<script setup>
+const sectionRef = ref(null)
+const inView = ref(false)
+const hoveredId = ref(null)
+const activeSlug = ref('all')
+const products = ref([])
+const categories = ref([{ name: 'All', slug: 'all' }])
+const loading = ref(true)
+
+const config = useRuntimeConfig()
+const apiBase = config.public.apiBase
+const waNumber = config.public.waNumber || '919999999999'
+
+const selectCategory = async (slug) => {
+  activeSlug.value = slug
+  loading.value = true
+  try {
+    const url = slug === 'all'
+      ? `${apiBase}/products/`
+      : `${apiBase}/products/?category=${slug}`
+    const data = await $fetch(url)
+    products.value = Array.isArray(data) ? data : (data.results || [])
+  } catch (e) {
+    console.error('Failed to fetch products:', e)
+    products.value = []
+  }
+  loading.value = false
+}
+
+const getWaLink = (product) => {
+  const msg = `Hi, I want to order *${product.name}* (₹${Number(product.price).toLocaleString('en-IN')}). Please confirm availability.`
+  return `https://wa.me/${waNumber}?text=${encodeURIComponent(msg)}`
+}
+
+onMounted(async () => {
+  const observer = new IntersectionObserver(([e]) => {
+    if (e.isIntersecting) inView.value = true
+  }, { threshold: 0.1 })
+  if (sectionRef.value) observer.observe(sectionRef.value)
+
+  try {
+    const [prodsData, catsData] = await Promise.all([
+      $fetch(`${apiBase}/products/`),
+      $fetch(`${apiBase}/categories/`)
+    ])
+    products.value = Array.isArray(prodsData) ? prodsData : (prodsData.results || [])
+    const cats = Array.isArray(catsData) ? catsData : (catsData.results || [])
+    categories.value = [{ name: 'All', slug: 'all' }, ...cats]
+  } catch (e) {
+    console.error('Failed to fetch data:', e)
+    products.value = []
+  }
+  loading.value = false
+})
+</script>
 <template>
   <section id="products" class="products-section" ref="sectionRef">
     <div class="container">
@@ -105,44 +161,6 @@
     </div>
   </section>
 </template>
-
-<script setup>
-const sectionRef = ref(null)
-const inView = ref(false)
-const hoveredId = ref(null)
-const activeSlug = ref('all')
-const products = ref([])
-const categories = ref([{ name: 'All', slug: 'all' }])
-const loading = ref(true)
-
-const config = useRuntimeConfig()
-const waNumber = config.public.waNumber || '919999999999'
-const { fetchProducts, fetchCategories } = useProducts()
-
-const selectCategory = async (slug) => {
-  activeSlug.value = slug
-  loading.value = true
-  products.value = await fetchProducts(slug === 'all' ? null : slug)
-  loading.value = false
-}
-
-const getWaLink = (product) => {
-  const msg = `Hi, I want to order *${product.name}* (₹${Number(product.price).toLocaleString('en-IN')}). Please confirm availability.`
-  return `https://wa.me/${waNumber}?text=${encodeURIComponent(msg)}`
-}
-
-onMounted(async () => {
-  const observer = new IntersectionObserver(([e]) => {
-    if (e.isIntersecting) inView.value = true
-  }, { threshold: 0.1 })
-  if (sectionRef.value) observer.observe(sectionRef.value)
-
-  const [prods, cats] = await Promise.all([fetchProducts(), fetchCategories()])
-  products.value = prods
-  categories.value = [{ name: 'All', slug: 'all' }, ...cats]
-  loading.value = false
-})
-</script>
 
 <style scoped>
 .products-section { padding: 100px 0; background: var(--cream); }

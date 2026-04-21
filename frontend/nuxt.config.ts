@@ -1,11 +1,10 @@
 export default defineNuxtConfig({
   compatibilityDate: '2026-04-21',
   ssr: false,
-  modules: ['@nuxtjs/tailwindcss'],
   nitro: {
     preset: 'static',
     prerender: {
-      failOnError: false,    // ← don't crash on prerender errors
+      failOnError: false,
       routes: ['/']
     }
   },
